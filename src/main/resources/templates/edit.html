@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>修改学生</title>
+</head>
+<body>
+<h3>修改学生信息</h3>
+<form action="/edit" method="post">
+    <input type="hidden" name="stuId" th:value="${s.stuId}">
+    姓名：<input name="name" th:value="${s.name}" required><br><br>
+    性别：<input name="gender" th:value="${s.gender}"><br><br>
+    年龄：<input name="age" type="number" th:value="${s.age}"><br><br>
+    专业：<input name="major" th:value="${s.major}"><br><br>
+    电话：<input name="phone" th:value="${s.phone}"><br><br>
+    <button type="submit">保存修改</button>
+</form>
+</body>
+</html>
