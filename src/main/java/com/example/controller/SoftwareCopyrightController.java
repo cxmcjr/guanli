@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.entity.SoftwareCopyright;
+import com.example.entity.User;
 import com.example.service.SoftwareCopyrightService;
 import com.example.service.FileService;
 import org.springframework.stereotype.Controller;
@@ -8,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Controller
@@ -35,7 +37,10 @@ public class SoftwareCopyrightController {
     @PostMapping("/add")
     public String add(SoftwareCopyright copyright,
             @RequestParam(value = "files", required = false) MultipartFile[] files,
+            HttpSession session,
             RedirectAttributes ra) {
+        User user = (User) session.getAttribute("user");
+        copyright.setSubmitter(user.getRealName());
         int id = copyrightService.add(copyright);
         if (files != null) {
             for (MultipartFile file : files) {

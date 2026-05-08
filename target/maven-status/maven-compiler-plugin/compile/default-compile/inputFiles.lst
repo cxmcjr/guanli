@@ -1,11 +1,16 @@
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\controller\FileController.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\service\CompetitionService.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\dao\UploadFileDao.java
+D:\JavaEE\TermTest\guanli\src\main\java\com\example\interceptor\LoginInterceptor.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\controller\InnovationProjectController.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\entity\InnovationProject.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\controller\SoftwareCopyrightController.java
+D:\JavaEE\TermTest\guanli\src\main\java\com\example\entity\User.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\Student.java
+D:\JavaEE\TermTest\guanli\src\main\java\com\example\controller\LoginController.java
+D:\JavaEE\TermTest\guanli\src\main\java\com\example\config\WebConfig.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\service\StatisticsService.java
+D:\JavaEE\TermTest\guanli\src\main\java\com\example\service\UserService.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\dao\SoftwareCopyrightDao.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\StudentController.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\entity\UploadFile.java
@@ -17,6 +22,7 @@ D:\JavaEE\TermTest\guanli\src\main\java\com\example\service\InnovationProjectSer
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\StudentDao.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\entity\AcademicPaper.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\entity\Competition.java
+D:\JavaEE\TermTest\guanli\src\main\java\com\example\dao\UserDao.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\dao\ReviewRecordDao.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\controller\AcademicPaperController.java
 D:\JavaEE\TermTest\guanli\src\main\java\com\example\controller\StatisticsController.java

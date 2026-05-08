@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理 - 科研成果管理系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "微软雅黑", sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 20px; }
+        .header .user-info { font-size: 13px; }
+        .header .user-info a { color: #ffcc00; text-decoration: none; margin-left: 10px; }
+        .nav { background: white; padding: 0 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; gap: 0; }
+        .nav a { display: block; padding: 12px 18px; text-decoration: none; color: #333; font-size: 13px; border-bottom: 3px solid transparent; transition: all 0.3s; }
+        .nav a:hover, .nav a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .msg { padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; font-size: 13px; }
+        .msg-success { background: #e8f5e9; color: #2e7d32; }
+        table { width: 100%; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        th { background: #f5f5f5; padding: 12px 15px; text-align: left; font-size: 13px; color: #666; }
+        td { padding: 12px 15px; font-size: 13px; border-top: 1px solid #eee; }
+        .role-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+        .role-admin { background: #fce4ec; color: #c62828; }
+        .role-secretary { background: #e3f2fd; color: #1565c0; }
+        .role-leader { background: #f3e5f5; color: #6a1b9a; }
+        .role-student { background: #e8f5e9; color: #2e7d32; }
+        select { padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
+        .btn-sm { padding: 6px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .btn-primary { background: #1a73e8; color: white; }
+        .btn-danger { background: #e53935; color: white; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>科研成果管理系统</h1>
+    <div class="user-info">
+        <span th:text="${session.user.realName}"></span>
+        (<span th:text="${session.user.role}"></span>)
+        <a href="/logout">退出</a>
+    </div>
+</div>
+<div class="nav">
+    <a href="/">首页</a>
+    <a href="/admin/users" class="active">用户管理</a>
+</div>
+<div class="container">
+    <div th:if="${msg}" class="msg msg-success" th:text="${msg}"></div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>用户名</th>
+            <th>真实姓名</th>
+            <th>角色</th>
+            <th>注册时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.id}"></td>
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.realName}"></td>
+            <td>
+                <span class="role-tag" th:classappend="'role-' + ${u.role}" th:text="${u.role}"></span>
+            </td>
+            <td th:text="${u.createTime}"></td>
+            <td>
+                <form action="/admin/users/edit" method="post" style="display:inline;">
+                    <input type="hidden" name="id" th:value="${u.id}">
+                    <select name="role">
+                        <option value="student" th:selected="${u.role == 'student'}">学生/教师</option>
+                        <option value="secretary" th:selected="${u.role == 'secretary'}">科研秘书</option>
+                        <option value="leader" th:selected="${u.role == 'leader'}">学院领导</option>
+                        <option value="admin" th:selected="${u.role == 'admin'}">系统管理员</option>
+                    </select>
+                    <button type="submit" class="btn-sm btn-primary">保存</button>
+                </form>
+                <a class="btn-sm btn-danger" th:href="@{/admin/users/delete/{id}(id=${u.id})}" onclick="return confirm('确定删除？')">删除</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
