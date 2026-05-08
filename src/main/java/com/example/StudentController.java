@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.service.StatisticsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -7,14 +8,17 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class StudentController {
     private final StudentDao dao;
+    private final StatisticsService statisticsService;
 
-    public StudentController(StudentDao dao) {
+    public StudentController(StudentDao dao, StatisticsService statisticsService) {
         this.dao = dao;
+        this.statisticsService = statisticsService;
     }
 
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("students", dao.findAll());
+        model.addAttribute("overview", statisticsService.getOverview());
         return "index";
     }
 

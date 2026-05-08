@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>数据统计与可视化分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "微软雅黑", sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 20px 40px; }
+        .header h1 { font-size: 24px; }
+        .nav { background: white; padding: 0 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; }
+        .nav a { display: block; padding: 15px 20px; text-decoration: none; color: #333; font-size: 14px; border-bottom: 3px solid transparent; }
+        .nav a:hover, .nav a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .overview-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .overview-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; }
+        .overview-card .num { font-size: 36px; font-weight: bold; color: #1a73e8; }
+        .overview-card .label { font-size: 14px; color: #666; margin-top: 5px; }
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .chart-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .chart-card h3 { font-size: 16px; color: #333; margin-bottom: 15px; }
+        .chart { width: 100%; height: 350px; }
+        .chart-full { width: 100%; height: 400px; }
+    </style>
+</head>
+<body>
+<div class="header"><h1>数据统计与可视化分析</h1></div>
+<div class="nav">
+    <a href="/">首页</a>
+    <a href="/competition">学科竞赛</a>
+    <a href="/innovation">大创项目</a>
+    <a href="/software">软件著作权</a>
+    <a href="/paper">学术论文</a>
+    <a href="/file">文件管理</a>
+    <a href="/statistics" class="active">数据统计</a>
+</div>
+<div class="container">
+    <div class="overview-cards">
+        <div class="overview-card">
+            <div class="num" th:text="${overview.competitionCount}">0</div>
+            <div class="label">学科竞赛成果</div>
+        </div>
+        <div class="overview-card">
+            <div class="num" th:text="${overview.innovationCount}">0</div>
+            <div class="label">大创项目</div>
+        </div>
+        <div class="overview-card">
+            <div class="num" th:text="${overview.softwareCount}">0</div>
+            <div class="label">软件著作权</div>
+        </div>
+        <div class="overview-card">
+            <div class="num" th:text="${overview.paperCount}">0</div>
+            <div class="label">学术论文</div>
+        </div>
+    </div>
+
+    <div class="chart-row">
+        <div class="chart-card">
+            <h3>竞赛类别分布</h3>
+            <div id="chartCategory" class="chart"></div>
+        </div>
+        <div class="chart-card">
+            <h3>竞赛获奖级别分布</h3>
+            <div id="chartLevel" class="chart"></div>
+        </div>
+    </div>
+
+    <div class="chart-row">
+        <div class="chart-card">
+            <h3>大创项目级别分布</h3>
+            <div id="chartInnovationLevel" class="chart"></div>
+        </div>
+        <div class="chart-card">
+            <h3>大创项目类型分布</h3>
+            <div id="chartInnovationType" class="chart"></div>
+        </div>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:20px;">
+        <h3>论文期刊级别分布</h3>
+        <div id="chartPaperLevel" class="chart-full"></div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var competitionStats = /*[[${competitionStats}]]*/ {};
+    var innovationStats = /*[[${innovationStats}]]*/ {};
+    var paperStats = /*[[${paperStats}]]*/ {};
+
+    function initPie(id, data) {
+        var chart = echarts.init(document.getElementById(id));
+        var keys = Object.keys(data);
+        var values = Object.values(data);
+        chart.setOption({
+            tooltip: { trigger: 'item' },
+            legend: { orient: 'vertical', right: 10, top: 'center' },
+            series: [{
+                type: 'pie', radius: ['40%', '70%'],
+                data: keys.map(function(k, i) { return { name: k, value: values[i] }; }),
+                emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.5)' } }
+            }]
+        });
+    }
+
+    function initBar(id, data, name) {
+        var chart = echarts.init(document.getElementById(id));
+        var keys = Object.keys(data);
+        var values = Object.values(data);
+        chart.setOption({
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: keys, axisLabel: { rotate: 30, fontSize: 11 } },
+            yAxis: { type: 'value' },
+            series: [{ type: 'bar', data: values, itemStyle: { color: '#1a73e8' } }]
+        });
+    }
+
+    initPie('chartCategory', competitionStats.byCategory || {});
+    initPie('chartLevel', competitionStats.byLevel || {});
+    initPie('chartInnovationLevel', innovationStats.byLevel || {});
+    initPie('chartInnovationType', innovationStats.byType || {});
+    initBar('chartPaperLevel', paperStats.byLevel || {});
+</script>
+</body>
+</html>

@@ -2,37 +2,111 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>学生管理系统</title>
+    <title>科研成果管理系统</title>
     <style>
-        body { margin: 40px; font-family: "微软雅黑"; }
-        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-        th { background: #f5f5f5; }
-        .btn { padding: 6px 12px; background: #409eff; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .btn-danger { background: #f56c6c; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "微软雅黑", sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 20px 40px; }
+        .header h1 { font-size: 24px; }
+        .header p { font-size: 14px; opacity: 0.85; margin-top: 5px; }
+        .nav { background: white; padding: 0 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; gap: 0; }
+        .nav a { display: block; padding: 15px 20px; text-decoration: none; color: #333; font-size: 14px; border-bottom: 3px solid transparent; transition: all 0.3s; }
+        .nav a:hover, .nav a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-4px); }
+        .card .icon { font-size: 36px; margin-bottom: 10px; }
+        .card .title { font-size: 14px; color: #666; margin-bottom: 8px; }
+        .card .count { font-size: 32px; font-weight: bold; color: #1a73e8; }
+        .card a { text-decoration: none; color: inherit; display: block; }
+        .section { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .section h3 { font-size: 18px; color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .feature-item { padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #1a73e8; }
+        .feature-item h4 { font-size: 15px; color: #333; margin-bottom: 5px; }
+        .feature-item p { font-size: 13px; color: #666; line-height: 1.6; }
+        .footer { text-align: center; padding: 20px; color: #999; font-size: 13px; }
     </style>
 </head>
 <body>
-<h2>学生管理系统</h2>
-<a href="/add"><button class="btn">添加学生</button></a>
-<table>
-    <tr>
-        <th>学号</th><th>姓名</th><th>性别</th><th>年龄</th><th>专业</th><th>电话</th><th>操作</th>
-    </tr>
-    <tr th:each="s : ${students}">
-        <td th:text="${s.stuId}"></td>
-        <td th:text="${s.name}"></td>
-        <td th:text="${s.gender}"></td>
-        <td th:text="${s.age}"></td>
-        <td th:text="${s.major}"></td>
-        <td th:text="${s.phone}"></td>
-        <td>
-            <a th:href="@{/edit/{id}(id=${s.stuId})}"><button class="btn">修改</button></a>
-            <a th:href="@{/delete/{id}(id=${s.stuId})}" onclick="return confirm('确定删除？')">
-                <button class="btn btn-danger">删除</button>
+<div class="header">
+    <h1>科研成果管理系统</h1>
+    <p>学科竞赛 · 创新训练 · 软件著作权 · 学术论文 — 全流程数字化管理</p>
+</div>
+<div class="nav">
+    <a href="/" class="active">首页</a>
+    <a href="/competition">学科竞赛</a>
+    <a href="/innovation">大创项目</a>
+    <a href="/software">软件著作权</a>
+    <a href="/paper">学术论文</a>
+    <a href="/file">文件管理</a>
+    <a href="/statistics">数据统计</a>
+</div>
+<div class="container">
+    <div class="cards">
+        <div class="card">
+            <a href="/competition">
+                <div class="icon">🏆</div>
+                <div class="title">学科竞赛成果</div>
+                <div class="count" th:text="${overview != null ? overview.competitionCount : 0}">0</div>
             </a>
-        </td>
-    </tr>
-</table>
+        </div>
+        <div class="card">
+            <a href="/innovation">
+                <div class="icon">🚀</div>
+                <div class="title">大创项目</div>
+                <div class="count" th:text="${overview != null ? overview.innovationCount : 0}">0</div>
+            </a>
+        </div>
+        <div class="card">
+            <a href="/software">
+                <div class="icon">💻</div>
+                <div class="title">软件著作权</div>
+                <div class="count" th:text="${overview != null ? overview.softwareCount : 0}">0</div>
+            </a>
+        </div>
+        <div class="card">
+            <a href="/paper">
+                <div class="icon">📄</div>
+                <div class="title">学术论文</div>
+                <div class="count" th:text="${overview != null ? overview.paperCount : 0}">0</div>
+            </a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>系统功能概览</h3>
+        <div class="features">
+            <div class="feature-item">
+                <h4>学科竞赛成果管理</h4>
+                <p>支持A/B/C类竞赛成果提交，涵盖国家级至院级获奖级别，上传证书、合影等证明材料</p>
+            </div>
+            <div class="feature-item">
+                <h4>大学生创新训练计划</h4>
+                <p>创新训练/创业训练/创业实践项目申报，支持申报书、结题材料、证书上传</p>
+            </div>
+            <div class="feature-item">
+                <h4>软件著作权管理</h4>
+                <p>软著信息录入，登记号格式校验，证书扫描件上传与关联存储</p>
+            </div>
+            <div class="feature-item">
+                <h4>学术论文管理</h4>
+                <p>CCF/SCI/EI/核心期刊论文管理，投稿初稿、录用终稿、审稿意见PDF上传</p>
+            </div>
+            <div class="feature-item">
+                <h4>多级审核流程</h4>
+                <p>科研秘书初审 → 学院领导终审，审核记录全程可追溯</p>
+            </div>
+            <div class="feature-item">
+                <h4>数据统计与可视化</h4>
+                <p>ECharts图表展示竞赛获奖分布、项目统计、论文期刊分布等</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <p>科研成果管理系统 &copy; 2026</p>
+</div>
 </body>
 </html>

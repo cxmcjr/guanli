@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>大学生创新训练计划项目管理</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "微软雅黑", sans-serif; background: #f0f2f5; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 20px 40px; }
+        .header h1 { font-size: 24px; }
+        .nav { background: white; padding: 0 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; }
+        .nav a { display: block; padding: 15px 20px; text-decoration: none; color: #333; font-size: 14px; border-bottom: 3px solid transparent; }
+        .nav a:hover, .nav a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #1a73e8; color: white; }
+        .btn-success { background: #34a853; color: white; }
+        .btn-danger { background: #ea4335; color: white; }
+        .btn-warning { background: #fbbc04; color: #333; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background: #f8f9fa; font-weight: 600; color: #333; }
+        tr:hover { background: #f8f9fa; }
+        .status { padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-secretary_approved { background: #cce5ff; color: #004085; }
+        .status-leader_approved { background: #d4edda; color: #155724; }
+        .status-archived { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .msg { padding: 10px 20px; background: #d4edda; color: #155724; border-radius: 6px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+<div class="header"><h1>大学生创新训练计划项目管理</h1></div>
+<div class="nav">
+    <a href="/">首页</a>
+    <a href="/competition">学科竞赛</a>
+    <a href="/innovation" class="active">大创项目</a>
+    <a href="/software">软件著作权</a>
+    <a href="/paper">学术论文</a>
+    <a href="/file">文件管理</a>
+    <a href="/statistics">数据统计</a>
+</div>
+<div class="container">
+    <div th:if="${msg}" class="msg" th:text="${msg}"></div>
+    <div class="toolbar">
+        <h2>项目列表</h2>
+        <a href="/innovation/add" class="btn btn-primary">+ 申报新项目</a>
+    </div>
+    <table>
+        <thead>
+            <tr><th>ID</th><th>项目名称</th><th>立项级别</th><th>立项类型</th><th>指导教师</th><th>立项时间</th><th>状态</th><th>操作</th></tr>
+        </thead>
+        <tbody>
+            <tr th:each="p : ${list}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.projectName}"></td>
+                <td th:text="${p.level}"></td>
+                <td th:text="${p.type}"></td>
+                <td th:text="${p.teacher}"></td>
+                <td th:text="${p.startDate}"></td>
+                <td><span class="status" th:classappend="'status-' + ${p.status}" th:text="${p.status}"></span></td>
+                <td>
+                    <a th:href="@{/innovation/detail/{id}(id=${p.id})}" class="btn btn-success btn-sm">详情</a>
+                    <a th:href="@{/innovation/edit/{id}(id=${p.id})}" class="btn btn-warning btn-sm">编辑</a>
+                    <a th:href="@{/innovation/delete/{id}(id=${p.id})}" class="btn btn-danger btn-sm" onclick="return confirm('确定删除？')">删除</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

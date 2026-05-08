@@ -1,0 +1,109 @@
+package com.example.controller;
+
+import com.example.entity.Competition;
+import com.example.service.CompetitionService;
+import com.example.service.FileService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.io.IOException;
+
+@Controller
+@RequestMapping("/competition")
+public class CompetitionController {
+    private final CompetitionService competitionService;
+    private final FileService fileService;
+
+    public CompetitionController(CompetitionService competitionService, FileService fileService) {
+        this.competitionService = competitionService;
+        this.fileService = fileService;
+    }
+
+    @GetMapping
+    public String list(Model model) {
+        model.addAttribute("list", competitionService.findAll());
+        return "competition/list";
+    }
+
+    @GetMapping("/add")
+    public String addPage() {
+        return "competition/add";
+    }
+
+    @PostMapping("/add")
+    public String add(Competition competition,
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            RedirectAttributes ra) {
+        int id = competitionService.add(competition);
+        if (files != null) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    try {
+                        fileService.upload(file, "competition", "competition", id);
+                    } catch (IOException ignored) {
+                    }
+                }
+            }
+        }
+        ra.addFlashAttribute("msg", "提交成功");
+        return "redirect:/competition";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String editPage(@PathVariable Integer id, Model model) {
+        model.addAttribute("c", competitionService.findById(id));
+        return "competition/edit";
+    }
+
+    @PostMapping("/edit")
+    public String edit(Competition competition, RedirectAttributes ra) {
+        competitionService.update(competition);
+        ra.addFlashAttribute("msg", "修改成功");
+        return "redirect:/competition";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id, RedirectAttributes ra) {
+        competitionService.delete(id);
+        ra.addFlashAttribute("msg", "删除成功");
+        return "redirect:/competition";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String detail(@PathVariable Integer id, Model model) {
+        model.addAttribute("c", competitionService.findById(id));
+        model.addAttribute("files", competitionService.getFiles(id));
+        model.addAttribute("reviews", competitionService.getReviewRecords(id));
+        return "competition/detail";
+    }
+
+    @PostMapping("/upload/{id}")
+    public String uploadFile(@PathVariable Integer id,
+            @RequestParam("files") MultipartFile[] files,
+            RedirectAttributes ra) {
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                try {
+                    fileService.upload(file, "competition", "competition", id);
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        ra.addFlashAttribute("msg", "上传成功");
+        return "redirect:/competition/detail/" + id;
+    }
+
+    @PostMapping("/review/{id}")
+    public String review(@PathVariable Integer id,
+            @RequestParam String reviewer,
+            @RequestParam String reviewLevel,
+            @RequestParam String status,
+            @RequestParam String opinion,
+            RedirectAttributes ra) {
+        competitionService.review(id, reviewer, reviewLevel, status, opinion);
+        ra.addFlashAttribute("msg", "审核完成");
+        return "redirect:/competition/detail/" + id;
+    }
+}
