@@ -1,9 +1,11 @@
 package com.example;
 
 import com.example.service.StatisticsService;
+import com.example.entity.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class StudentController {
@@ -16,9 +18,14 @@ public class StudentController {
     }
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
         model.addAttribute("students", dao.findAll());
-        model.addAttribute("overview", statisticsService.getOverview());
+        if ("student".equals(user.getRole())) {
+            model.addAttribute("overview", statisticsService.getOverview(user.getRealName()));
+        } else {
+            model.addAttribute("overview", statisticsService.getOverview());
+        }
         return "index";
     }
 
