@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/paper")
@@ -24,8 +26,16 @@ public class AcademicPaperController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("list", paperService.findAll());
+    public String list(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        List<AcademicPaper> all = paperService.findAll();
+        if ("student".equals(user.getRole())) {
+            String name = user.getRealName();
+            all = all.stream()
+                    .filter(p -> name.equals(p.getSubmitter()) || isInList(name, p.getAuthors()))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("list", all);
         return "paper/list";
     }
 
@@ -132,5 +142,15 @@ public class AcademicPaperController {
         paperService.review(id, reviewer, reviewLevel, status, opinion);
         ra.addFlashAttribute("msg", "审核完成");
         return "redirect:/paper/detail/" + id;
+    }
+
+    private boolean isInList(String name, String list) {
+        if (list == null || list.isEmpty())
+            return false;
+        for (String s : list.split(",")) {
+            if (s.trim().equals(name))
+                return true;
+        }
+        return false;
     }
 }

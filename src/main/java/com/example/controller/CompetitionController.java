@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/competition")
@@ -24,8 +26,16 @@ public class CompetitionController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("list", competitionService.findAll());
+    public String list(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        List<Competition> all = competitionService.findAll();
+        if ("student".equals(user.getRole())) {
+            String name = user.getRealName();
+            all = all.stream()
+                    .filter(c -> name.equals(c.getSubmitter()) || isInList(name, c.getParticipants()))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("list", all);
         return "competition/list";
     }
 
@@ -62,9 +72,15 @@ public class CompetitionController {
     public String editPage(@PathVariable Integer id, Model model, HttpSession session, RedirectAttributes ra) {
         Competition c = competitionService.findById(id);
         User user = (User) session.getAttribute("user");
-        if ("student".equals(user.getRole()) && !"pending".equals(c.getStatus())) {
-            ra.addFlashAttribute("msg", "该成果已审核，无法修改");
-            return "redirect:/competition";
+        if ("student".equals(user.getRole())) {
+            if (!user.getRealName().equals(c.getSubmitter())) {
+                ra.addFlashAttribute("msg", "您不是提交人，无法修改");
+                return "redirect:/competition";
+            }
+            if (!"pending".equals(c.getStatus())) {
+                ra.addFlashAttribute("msg", "该成果已审核，无法修改");
+                return "redirect:/competition";
+            }
         }
         model.addAttribute("c", c);
         return "competition/edit";
@@ -74,9 +90,15 @@ public class CompetitionController {
     public String edit(Competition competition, HttpSession session, RedirectAttributes ra) {
         Competition existing = competitionService.findById(competition.getId());
         User user = (User) session.getAttribute("user");
-        if ("student".equals(user.getRole()) && !"pending".equals(existing.getStatus())) {
-            ra.addFlashAttribute("msg", "该成果已审核，无法修改");
-            return "redirect:/competition";
+        if ("student".equals(user.getRole())) {
+            if (!user.getRealName().equals(existing.getSubmitter())) {
+                ra.addFlashAttribute("msg", "您不是提交人，无法修改");
+                return "redirect:/competition";
+            }
+            if (!"pending".equals(existing.getStatus())) {
+                ra.addFlashAttribute("msg", "该成果已审核，无法修改");
+                return "redirect:/competition";
+            }
         }
         competitionService.update(competition);
         ra.addFlashAttribute("msg", "修改成功");
@@ -87,9 +109,15 @@ public class CompetitionController {
     public String delete(@PathVariable Integer id, HttpSession session, RedirectAttributes ra) {
         Competition c = competitionService.findById(id);
         User user = (User) session.getAttribute("user");
-        if ("student".equals(user.getRole()) && !"pending".equals(c.getStatus())) {
-            ra.addFlashAttribute("msg", "该成果已审核，无法删除");
-            return "redirect:/competition";
+        if ("student".equals(user.getRole())) {
+            if (!user.getRealName().equals(c.getSubmitter())) {
+                ra.addFlashAttribute("msg", "您不是提交人，无法删除");
+                return "redirect:/competition";
+            }
+            if (!"pending".equals(c.getStatus())) {
+                ra.addFlashAttribute("msg", "该成果已审核，无法删除");
+                return "redirect:/competition";
+            }
         }
         competitionService.delete(id);
         ra.addFlashAttribute("msg", "删除成功");
@@ -132,5 +160,13 @@ public class CompetitionController {
         competitionService.review(id, reviewer, reviewLevel, status, opinion);
         ra.addFlashAttribute("msg", "审核完成");
         return "redirect:/competition/detail/" + id;
+    }
+
+    private boolean isInList(String name, String list) {
+        if (list == null || list.isEmpty()) return false;
+        for (String s : list.split(",")) {
+            if (s.trim().equals(name)) return true;
+        }
+        return false;
     }
 }

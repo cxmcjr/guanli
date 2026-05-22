@@ -214,9 +214,12 @@
                     </td>
                     <td>
                         <a th:href="@{/competition/detail/{id}(id=${c.id})}" class="btn btn-success btn-sm">详情</a>
-                        <a th:href="@{/competition/edit/{id}(id=${c.id})}" class="btn btn-warning btn-sm">编辑</a>
-                        <a th:href="@{/competition/delete/{id}(id=${c.id})}" class="btn btn-danger btn-sm"
-                            onclick="return confirm('确定删除？')">删除</a>
+                        <a th:href="@{/competition/edit/{id}(id=${c.id})}"
+                            th:if="${session.user.role != 'student' or session.user.realName == c.submitter}"
+                            class="btn btn-warning btn-sm">编辑</a>
+                        <a th:href="@{/competition/delete/{id}(id=${c.id})}"
+                            th:if="${session.user.role != 'student' or session.user.realName == c.submitter}"
+                            class="btn btn-danger btn-sm" onclick="return confirm('确定删除？')">删除</a>
                     </td>
                 </tr>
             </tbody>

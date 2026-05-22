@@ -208,9 +208,12 @@
                     <td><span class="status" th:classappend="'status-' + ${p.status}" th:text="${p.status}"></span></td>
                     <td>
                         <a th:href="@{/innovation/detail/{id}(id=${p.id})}" class="btn btn-success btn-sm">详情</a>
-                        <a th:href="@{/innovation/edit/{id}(id=${p.id})}" class="btn btn-warning btn-sm">编辑</a>
-                        <a th:href="@{/innovation/delete/{id}(id=${p.id})}" class="btn btn-danger btn-sm"
-                            onclick="return confirm('确定删除？')">删除</a>
+                        <a th:href="@{/innovation/edit/{id}(id=${p.id})}"
+                            th:if="${session.user.role != 'student' or session.user.realName == p.submitter}"
+                            class="btn btn-warning btn-sm">编辑</a>
+                        <a th:href="@{/innovation/delete/{id}(id=${p.id})}"
+                            th:if="${session.user.role != 'student' or session.user.realName == p.submitter}"
+                            class="btn btn-danger btn-sm" onclick="return confirm('确定删除？')">删除</a>
                     </td>
                 </tr>
             </tbody>

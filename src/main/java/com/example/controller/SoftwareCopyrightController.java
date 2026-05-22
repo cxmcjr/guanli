@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/software")
@@ -24,8 +26,16 @@ public class SoftwareCopyrightController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("list", copyrightService.findAll());
+    public String list(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        List<SoftwareCopyright> all = copyrightService.findAll();
+        if ("student".equals(user.getRole())) {
+            String name = user.getRealName();
+            all = all.stream()
+                    .filter(s -> name.equals(s.getSubmitter()) || name.equals(s.getAuthor()))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("list", all);
         return "software/list";
     }
 
