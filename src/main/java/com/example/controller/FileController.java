@@ -42,7 +42,9 @@ public class FileController {
             if (!file.isEmpty()) {
                 try {
                     fileService.upload(file, category, relatedType, relatedId);
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                    return "redirect:/file";
                 }
             }
         }

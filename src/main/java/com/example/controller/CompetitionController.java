@@ -47,7 +47,9 @@ public class CompetitionController {
                 if (!file.isEmpty()) {
                     try {
                         fileService.upload(file, "competition", "competition", id);
-                    } catch (IOException ignored) {
+                    } catch (IOException e) {
+                        ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                        return "redirect:/competition";
                     }
                 }
             }
@@ -92,7 +94,9 @@ public class CompetitionController {
             if (!file.isEmpty()) {
                 try {
                     fileService.upload(file, "competition", "competition", id);
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                    return "redirect:/competition/detail/" + id;
                 }
             }
         }

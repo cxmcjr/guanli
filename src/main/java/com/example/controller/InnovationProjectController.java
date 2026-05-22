@@ -47,7 +47,9 @@ public class InnovationProjectController {
                 if (!file.isEmpty()) {
                     try {
                         fileService.upload(file, "innovation", "innovation", id);
-                    } catch (IOException ignored) {
+                    } catch (IOException e) {
+                        ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                        return "redirect:/innovation";
                     }
                 }
             }
@@ -92,7 +94,9 @@ public class InnovationProjectController {
             if (!file.isEmpty()) {
                 try {
                     fileService.upload(file, "innovation", "innovation", id);
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                    return "redirect:/innovation/detail/" + id;
                 }
             }
         }

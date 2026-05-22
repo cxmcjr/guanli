@@ -47,7 +47,9 @@ public class SoftwareCopyrightController {
                 if (!file.isEmpty()) {
                     try {
                         fileService.upload(file, "software", "software", id);
-                    } catch (IOException ignored) {
+                    } catch (IOException e) {
+                        ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                        return "redirect:/software";
                     }
                 }
             }
@@ -92,7 +94,9 @@ public class SoftwareCopyrightController {
             if (!file.isEmpty()) {
                 try {
                     fileService.upload(file, "software", "software", id);
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                    return "redirect:/software/detail/" + id;
                 }
             }
         }

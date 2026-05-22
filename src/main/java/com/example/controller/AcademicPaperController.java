@@ -47,7 +47,9 @@ public class AcademicPaperController {
                 if (!file.isEmpty()) {
                     try {
                         fileService.upload(file, "paper", "paper", id);
-                    } catch (IOException ignored) {
+                    } catch (IOException e) {
+                        ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                        return "redirect:/paper";
                     }
                 }
             }
@@ -92,7 +94,9 @@ public class AcademicPaperController {
             if (!file.isEmpty()) {
                 try {
                     fileService.upload(file, "paper", "paper", id);
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    ra.addFlashAttribute("msg", "文件上传失败: " + e.getMessage());
+                    return "redirect:/paper/detail/" + id;
                 }
             }
         }
