@@ -59,20 +59,38 @@ public class SoftwareCopyrightController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editPage(@PathVariable Integer id, Model model) {
-        model.addAttribute("s", copyrightService.findById(id));
+    public String editPage(@PathVariable Integer id, Model model, HttpSession session, RedirectAttributes ra) {
+        SoftwareCopyright s = copyrightService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(s.getStatus())) {
+            ra.addFlashAttribute("msg", "该软著已审核，无法修改");
+            return "redirect:/software";
+        }
+        model.addAttribute("s", s);
         return "software/edit";
     }
 
     @PostMapping("/edit")
-    public String edit(SoftwareCopyright copyright, RedirectAttributes ra) {
+    public String edit(SoftwareCopyright copyright, HttpSession session, RedirectAttributes ra) {
+        SoftwareCopyright existing = copyrightService.findById(copyright.getId());
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(existing.getStatus())) {
+            ra.addFlashAttribute("msg", "该软著已审核，无法修改");
+            return "redirect:/software";
+        }
         copyrightService.update(copyright);
         ra.addFlashAttribute("msg", "修改成功");
         return "redirect:/software";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes ra) {
+    public String delete(@PathVariable Integer id, HttpSession session, RedirectAttributes ra) {
+        SoftwareCopyright s = copyrightService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(s.getStatus())) {
+            ra.addFlashAttribute("msg", "该软著已审核，无法删除");
+            return "redirect:/software";
+        }
         copyrightService.delete(id);
         ra.addFlashAttribute("msg", "删除成功");
         return "redirect:/software";

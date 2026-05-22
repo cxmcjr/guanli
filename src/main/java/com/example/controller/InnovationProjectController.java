@@ -59,20 +59,38 @@ public class InnovationProjectController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editPage(@PathVariable Integer id, Model model) {
-        model.addAttribute("p", projectService.findById(id));
+    public String editPage(@PathVariable Integer id, Model model, HttpSession session, RedirectAttributes ra) {
+        InnovationProject p = projectService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(p.getStatus())) {
+            ra.addFlashAttribute("msg", "该项目已审核，无法修改");
+            return "redirect:/innovation";
+        }
+        model.addAttribute("p", p);
         return "innovation/edit";
     }
 
     @PostMapping("/edit")
-    public String edit(InnovationProject project, RedirectAttributes ra) {
+    public String edit(InnovationProject project, HttpSession session, RedirectAttributes ra) {
+        InnovationProject existing = projectService.findById(project.getId());
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(existing.getStatus())) {
+            ra.addFlashAttribute("msg", "该项目已审核，无法修改");
+            return "redirect:/innovation";
+        }
         projectService.update(project);
         ra.addFlashAttribute("msg", "修改成功");
         return "redirect:/innovation";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes ra) {
+    public String delete(@PathVariable Integer id, HttpSession session, RedirectAttributes ra) {
+        InnovationProject p = projectService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(p.getStatus())) {
+            ra.addFlashAttribute("msg", "该项目已审核，无法删除");
+            return "redirect:/innovation";
+        }
         projectService.delete(id);
         ra.addFlashAttribute("msg", "删除成功");
         return "redirect:/innovation";

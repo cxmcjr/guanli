@@ -1,79 +1,192 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>申报大创项目</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: "微软雅黑", sans-serif; background: #f0f2f5; min-height: 100vh; }
-        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 20px 40px; }
-        .header h1 { font-size: 24px; }
-        .nav { background: white; padding: 0 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; }
-        .nav a { display: block; padding: 15px 20px; text-decoration: none; color: #333; font-size: 14px; border-bottom: 3px solid transparent; }
-        .nav a:hover, .nav a.active { color: #1a73e8; border-bottom-color: #1a73e8; }
-        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-        .form-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-        .form-card h2 { margin-bottom: 25px; color: #333; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; margin-bottom: 6px; font-size: 14px; color: #555; font-weight: 600; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .btn { padding: 12px 30px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; }
-        .btn-primary { background: #1a73e8; color: white; width: 100%; }
-        .btn-back { background: #eee; color: #333; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; display: inline-block; margin-bottom: 15px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "微软雅黑", sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white;
+            padding: 20px 40px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .nav {
+            background: white;
+            padding: 0 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+        }
+
+        .nav a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: #1a73e8;
+            border-bottom-color: #1a73e8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-card h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-back {
+            background: #eee;
+            color: #333;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
+
 <body>
-<div class="header"><h1>大学生创新训练计划项目管理</h1></div>
-<div class="nav">
-    <a href="/">首页</a>
-    <a href="/competition">学科竞赛</a>
-    <a href="/innovation" class="active">大创项目</a>
-    <a href="/software">软件著作权</a>
-    <a href="/paper">学术论文</a>
-    <a href="/file">文件管理</a>
-    <a href="/statistics">数据统计</a>
-</div>
-<div class="container">
-    <a href="/innovation" class="btn-back">← 返回列表</a>
-    <div class="form-card">
-        <h2>申报新项目</h2>
-        <form action="/innovation/add" method="post" enctype="multipart/form-data">
-            <div class="form-group"><label>项目名称 *</label><input type="text" name="projectName" required></div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>立项级别 *</label>
-                    <select name="level" required>
-                        <option value="">请选择</option>
-                        <option value="国家级">国家级</option>
-                        <option value="省级">省级</option>
-                        <option value="校级">校级</option>
-                        <option value="院级">院级</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>立项类型 *</label>
-                    <select name="type" required>
-                        <option value="">请选择</option>
-                        <option value="创新训练项目">创新训练项目</option>
-                        <option value="创业训练项目">创业训练项目</option>
-                        <option value="创业实践项目">创业实践项目</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>指导教师</label><input type="text" name="teacher"></div>
-                <div class="form-group"><label>立项时间</label><input type="date" name="startDate"></div>
-            </div>
-            <div class="form-row">
-                <div class="form-group"><label>提交人</label><input type="text" name="submitter"></div>
-            </div>
-            <div class="form-group"><label>立项人员</label><textarea name="members" placeholder="多个人员用逗号分隔"></textarea></div>
-            <div class="form-group"><label>上传材料（申报书Word/PDF、结题材料ZIP、证书图片/PDF）</label><input type="file" name="files" multiple></div>
-            <button type="submit" class="btn btn-primary">提交申报</button>
-        </form>
+    <div class="header">
+        <h1>大学生创新训练计划项目管理</h1>
     </div>
-</div>
+    <div class="nav">
+        <a href="/">首页</a>
+        <a href="/competition">学科竞赛</a>
+        <a href="/innovation" class="active">大创项目</a>
+        <a href="/software">软件著作权</a>
+        <a href="/paper">学术论文</a>
+        <a href="/file">文件管理</a>
+        <a href="/statistics">数据统计</a>
+    </div>
+    <div class="container">
+        <a href="/innovation" class="btn-back">← 返回列表</a>
+        <div class="form-card">
+            <h2>申报新项目</h2>
+            <form action="/innovation/add" method="post" enctype="multipart/form-data">
+                <div class="form-group"><label>项目名称 *</label><input type="text" name="projectName" required></div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>立项级别 *</label>
+                        <select name="level" required>
+                            <option value="">请选择</option>
+                            <option value="国家级">国家级</option>
+                            <option value="省级">省级</option>
+                            <option value="校级">校级</option>
+                            <option value="院级">院级</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>立项类型 *</label>
+                        <select name="type" required>
+                            <option value="">请选择</option>
+                            <option value="创新训练项目">创新训练项目</option>
+                            <option value="创业训练项目">创业训练项目</option>
+                            <option value="创业实践项目">创业实践项目</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>指导教师</label><input type="text" name="teacher"></div>
+                    <div class="form-group"><label>立项时间</label><input type="date" name="startDate"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>提交人</label>
+                        <input type="text" th:if="${session.user.role == 'student'}" th:value="${session.user.realName}"
+                            readonly>
+                        <input type="text" th:unless="${session.user.role == 'student'}" name="submitter">
+                    </div>
+                </div>
+                <div class="form-group"><label>立项人员</label><textarea name="members" placeholder="多个人员用逗号分隔"></textarea>
+                </div>
+                <div class="form-group"><label>上传材料（申报书Word/PDF、结题材料ZIP、证书图片/PDF）</label><input type="file" name="files"
+                        multiple></div>
+                <button type="submit" class="btn btn-primary">提交申报</button>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

@@ -107,16 +107,18 @@
         </table>
     </div>
 
-    <div class="card">
+    <div class="card"
+        th:if="${session.user.role == 'secretary' or session.user.role == 'leader' or session.user.role == 'admin'}">
         <h3>审核操作</h3>
         <form th:action="@{/paper/review/{id}(id=${p.id})}" method="post">
             <div class="form-row">
-                <div class="form-group"><label>审核人</label><input type="text" name="reviewer" required></div>
+                <div class="form-group"><label>审核人</label><input type="text" name="reviewer"
+                        th:value="${session.user.realName}" required></div>
                 <div class="form-group">
                     <label>审核级别</label>
                     <select name="reviewLevel" required>
-                        <option value="secretary">科研秘书</option>
-                        <option value="leader">学院领导</option>
+                        <option value="secretary" th:selected="${session.user.role == 'secretary'}">科研秘书</option>
+                        <option value="leader" th:selected="${session.user.role == 'leader'}">学院领导</option>
                     </select>
                 </div>
             </div>

@@ -59,20 +59,38 @@ public class CompetitionController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editPage(@PathVariable Integer id, Model model) {
-        model.addAttribute("c", competitionService.findById(id));
+    public String editPage(@PathVariable Integer id, Model model, HttpSession session, RedirectAttributes ra) {
+        Competition c = competitionService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(c.getStatus())) {
+            ra.addFlashAttribute("msg", "该成果已审核，无法修改");
+            return "redirect:/competition";
+        }
+        model.addAttribute("c", c);
         return "competition/edit";
     }
 
     @PostMapping("/edit")
-    public String edit(Competition competition, RedirectAttributes ra) {
+    public String edit(Competition competition, HttpSession session, RedirectAttributes ra) {
+        Competition existing = competitionService.findById(competition.getId());
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(existing.getStatus())) {
+            ra.addFlashAttribute("msg", "该成果已审核，无法修改");
+            return "redirect:/competition";
+        }
         competitionService.update(competition);
         ra.addFlashAttribute("msg", "修改成功");
         return "redirect:/competition";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes ra) {
+    public String delete(@PathVariable Integer id, HttpSession session, RedirectAttributes ra) {
+        Competition c = competitionService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(c.getStatus())) {
+            ra.addFlashAttribute("msg", "该成果已审核，无法删除");
+            return "redirect:/competition";
+        }
         competitionService.delete(id);
         ra.addFlashAttribute("msg", "删除成功");
         return "redirect:/competition";

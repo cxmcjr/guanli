@@ -59,20 +59,38 @@ public class AcademicPaperController {
     }
 
     @GetMapping("/edit/{id}")
-    public String editPage(@PathVariable Integer id, Model model) {
-        model.addAttribute("p", paperService.findById(id));
+    public String editPage(@PathVariable Integer id, Model model, HttpSession session, RedirectAttributes ra) {
+        AcademicPaper p = paperService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(p.getStatus())) {
+            ra.addFlashAttribute("msg", "该论文已审核，无法修改");
+            return "redirect:/paper";
+        }
+        model.addAttribute("p", p);
         return "paper/edit";
     }
 
     @PostMapping("/edit")
-    public String edit(AcademicPaper paper, RedirectAttributes ra) {
+    public String edit(AcademicPaper paper, HttpSession session, RedirectAttributes ra) {
+        AcademicPaper existing = paperService.findById(paper.getId());
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(existing.getStatus())) {
+            ra.addFlashAttribute("msg", "该论文已审核，无法修改");
+            return "redirect:/paper";
+        }
         paperService.update(paper);
         ra.addFlashAttribute("msg", "修改成功");
         return "redirect:/paper";
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes ra) {
+    public String delete(@PathVariable Integer id, HttpSession session, RedirectAttributes ra) {
+        AcademicPaper p = paperService.findById(id);
+        User user = (User) session.getAttribute("user");
+        if ("student".equals(user.getRole()) && !"pending".equals(p.getStatus())) {
+            ra.addFlashAttribute("msg", "该论文已审核，无法删除");
+            return "redirect:/paper";
+        }
         paperService.delete(id);
         ra.addFlashAttribute("msg", "删除成功");
         return "redirect:/paper";
