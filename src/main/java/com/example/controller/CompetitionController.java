@@ -163,9 +163,11 @@ public class CompetitionController {
     }
 
     private boolean isInList(String name, String list) {
-        if (list == null || list.isEmpty()) return false;
-        for (String s : list.split(",")) {
-            if (s.trim().equals(name)) return true;
+        if (list == null || list.isEmpty())
+            return false;
+        for (String s : list.split("[,，]")) {
+            if (s.trim().equals(name))
+                return true;
         }
         return false;
     }
